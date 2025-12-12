@@ -1,20 +1,32 @@
-use crossterm::event::{Event, KeyCode};
+use crossterm::event::{EnableFocusChange, Event, KeyCode};
 
 use crate::events::input_events::handle_input_key;
-use crate::state::AppState;
+use crate::state::{AppState, Focus};
 
 pub fn read_event(event: Event, app_state: &mut AppState) -> bool {
     match event {
         Event::Key(key_event) => match key_event.code {
             KeyCode::Esc => {
                 app_state.app_exit();
-                app_state.exit
             }
-            key_event => {
-                handle_input_key(app_state, key_event);
-                app_state.exit
+            KeyCode::Tab => {
+                app_state.focus_next();
             }
+            _ => match app_state.focus {
+                Focus::Input => {
+                    handle_input_key(app_state, key_event.code);
+                }
+                Focus::History => {
+                    todo!()
+                }
+                Focus::Favorites => {
+                    todo!()
+                }
+            },
         },
-        _ => app_state.exit,
+        _ => {
+            todo!()
+        }
     }
+    app_state.exit
 }

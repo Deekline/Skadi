@@ -1,3 +1,5 @@
+mod favorites;
+mod history;
 mod input;
 mod render;
 

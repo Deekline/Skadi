@@ -1,16 +1,15 @@
 use tui_input::Input;
 
-enum Focus {
+pub enum Focus {
     Input,
     History,
     Favorites,
-    Forecast,
-    None,
 }
 
 pub struct AppState {
     pub city_input: Input,
     pub exit: bool,
+    pub focus: Focus,
 }
 
 impl AppState {
@@ -18,10 +17,27 @@ impl AppState {
         Self {
             city_input: Input::new("".to_string()),
             exit: false,
+            focus: Focus::Input,
         }
     }
 
     pub fn app_exit(&mut self) {
         self.exit = true
+    }
+
+    pub fn focus_next(&mut self) {
+        self.focus = match self.focus {
+            Focus::Input => Focus::History,
+            Focus::History => Focus::Favorites,
+            Focus::Favorites => Focus::Input,
+        }
+    }
+
+    pub fn focus_prev(&mut self) {
+        self.focus = match self.focus {
+            Focus::Input => Focus::Favorites,
+            Focus::History => Focus::Input,
+            Focus::Favorites => Focus::History,
+        }
     }
 }

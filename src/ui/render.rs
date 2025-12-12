@@ -1,4 +1,7 @@
-use crate::{state::AppState, ui::draw_city_input};
+use crate::{
+    state::AppState,
+    ui::{draw_city_input, favorites::draw_favorites, history::draw_history},
+};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -45,6 +48,8 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     let areas = compute_layout(frame.area());
 
     draw_city_input(frame, areas.input_area, app);
+    draw_history(frame, areas.history_area, app);
+    draw_favorites(frame, areas.favorites_area, app);
 
     // Placeholder
     frame.render_widget(
@@ -73,4 +78,45 @@ pub fn render(frame: &mut Frame, app: &AppState) {
             .title("Help / Navigation"),
         areas.bottom_bar_area,
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui::layout::Rect;
+
+    #[test]
+    fn layout_respects_bottom_bar_height_and_sidebar_width() {
+        let area = Rect::new(0, 0, 80, 30);
+
+        let layout = compute_layout(area);
+
+        assert_eq!(layout.bottom_bar_area.height, 3);
+        assert_eq!(layout.bottom_bar_area.y, 30 - 3);
+    }
+
+    #[test]
+    fn layout_respects_sidebar_vertical_splits() {
+        let area = Rect::new(0, 0, 80, 30);
+        let layout = compute_layout(area);
+
+        assert_eq!(layout.input_area.height, 3);
+        assert_eq!(layout.history_area.height, 10);
+        assert_eq!(
+            layout.favorites_area.y,
+            layout.history_area.y + layout.history_area.height
+        );
+    }
+
+    #[test]
+    fn layout_respects_content_vertical_splits() {
+        let area = Rect::new(0, 0, 80, 30);
+        let layout = compute_layout(area);
+
+        assert_eq!(layout.forecast_area.height, 10);
+        assert_eq!(
+            layout.forecast_area.y,
+            layout.current_area.y + layout.current_area.height
+        );
+    }
 }
