@@ -16,6 +16,9 @@ pub fn read_event(event: Event, app_state: &mut AppState) -> bool {
                 Focus::Input => {
                     handle_input_key(app_state, key_event.code);
                 }
+                Focus::SearchResults => {
+                    todo!()
+                }
                 Focus::History => {
                     todo!()
                 }

@@ -1,6 +1,9 @@
 use crate::{
     state::AppState,
-    ui::{draw_city_input, favorites::draw_favorites, history::draw_history},
+    ui::{
+        draw_city_input, favorites::draw_favorites, history::draw_history,
+        search_results::draw_search_results,
+    },
 };
 use ratatui::{
     Frame,
@@ -11,6 +14,7 @@ use ratatui::{
 pub struct LayoutAreas {
     pub bottom_bar_area: Rect,
     pub input_area: Rect,
+    pub search_results_area: Rect,
     pub history_area: Rect,
     pub favorites_area: Rect,
     pub current_area: Rect,
@@ -24,8 +28,14 @@ fn compute_layout(area: Rect) -> LayoutAreas {
     let [sidebar_area, content_area] =
         Layout::horizontal([Constraint::Length(50), Constraint::Min(0)]).areas(main_area);
 
-    let [input_area, history_area, favorites_area] = Layout::vertical([
+    let [
+        input_area,
+        search_results_area,
+        history_area,
+        favorites_area,
+    ] = Layout::vertical([
         Constraint::Length(3),
+        Constraint::Length(15),
         Constraint::Length(10),
         Constraint::Min(0),
     ])
@@ -37,6 +47,7 @@ fn compute_layout(area: Rect) -> LayoutAreas {
     LayoutAreas {
         bottom_bar_area,
         input_area,
+        search_results_area,
         history_area,
         favorites_area,
         current_area,
@@ -48,6 +59,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     let areas = compute_layout(frame.area());
 
     draw_city_input(frame, areas.input_area, app);
+    draw_search_results(frame, areas.search_results_area, app);
     draw_history(frame, areas.history_area, app);
     draw_favorites(frame, areas.favorites_area, app);
 
