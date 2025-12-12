@@ -14,6 +14,7 @@ pub fn draw_city_input(frame: &mut Frame, area: Rect, app: &AppState) {
                 .borders(Borders::all())
                 .title("Search city"),
         );
+
     frame.render_widget(paragraph, area);
 
     if matches!(app.focus, Focus::Input) {

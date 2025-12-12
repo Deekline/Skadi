@@ -10,6 +10,8 @@ pub struct AppState {
     pub city_input: Input,
     pub exit: bool,
     pub focus: Focus,
+    pub history: Vec<String>,
+    pub history_selected: Option<usize>,
 }
 
 impl AppState {
@@ -18,6 +20,12 @@ impl AppState {
             city_input: Input::new("".to_string()),
             exit: false,
             focus: Focus::Input,
+            history: vec![
+                "Poltava".to_string(),
+                "Wroclaw".to_string(),
+                "Kyiv".to_string(),
+            ],
+            history_selected: Some(0),
         }
     }
 
