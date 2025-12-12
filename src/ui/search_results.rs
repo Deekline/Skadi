@@ -19,7 +19,15 @@ pub fn draw_search_results(frame: &mut Frame, area: Rect, app: &AppState) {
             .borders(Borders::ALL)
             .title("Search Results")
     };
-    let list = List::new(app.search_results.clone())
+
+    let cities: Vec<String> = app
+        .search_results
+        .clone()
+        .into_iter()
+        .map(|city| city.name)
+        .collect();
+
+    let list = List::new(cities)
         .block(search_results_block)
         .style(Style::new().fg(Color::White))
         .highlight_style(Style::new().add_modifier(Modifier::ITALIC))

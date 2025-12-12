@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use tui_input::Input;
 
 pub enum Focus {
@@ -57,37 +58,31 @@ impl AppState {
     }
 }
 
+#[derive(Deserialize, Debug)]
 pub struct GeocodingResult {
-    id: u32,
-    name: String,
-    latitude: f32,
-    longitude: f32,
-    elevation: Option<f64>,
-    feature_code: String,
-    country_code: String,
-    admin1_id: u32,
-    admin2_id: u32,
-    timezone: String,
-    population: u32,
-    country_id: u32,
-    country: String,
-    admin1: Option<String>,
-    admin2: Option<String>,
+    pub name: String,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub country: String,
+    pub country_code: String,
+    pub admin1: Option<String>,
+    pub admin2: Option<String>,
+    pub timezone: String,
 }
 
+#[derive(Deserialize, Debug)]
 pub struct GeocodingResponse {
-    result: Vec<GeocodingResult>,
+    pub results: Vec<GeocodingResult>,
 }
 
 #[derive(Clone)]
 pub struct CitySearchResult {
-    name: String,
-    country: String,
-    country_code: String,
-    admin1: Option<String>,
-    lat: f64,
-    lon: f64,
-    elevation: Option<f64>,
-    timezone: String,
-    is_favorite: bool,
+    pub name: String,
+    pub country: String,
+    pub country_code: String,
+    pub admin1: Option<String>,
+    pub lat: f64,
+    pub lon: f64,
+    pub timezone: String,
+    pub is_favorite: bool,
 }
