@@ -26,7 +26,7 @@ fn compute_layout(area: Rect) -> LayoutAreas {
         Layout::vertical([Constraint::Min(0), Constraint::Length(3)]).areas(area);
 
     let [sidebar_area, content_area] =
-        Layout::horizontal([Constraint::Length(50), Constraint::Min(0)]).areas(main_area);
+        Layout::horizontal([Constraint::Length(70), Constraint::Min(0)]).areas(main_area);
 
     let [
         input_area,

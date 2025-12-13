@@ -1,5 +1,5 @@
 use ratatui::style::{Color, Modifier, Style};
-use ratatui::widgets::{List, ListDirection};
+use ratatui::widgets::{List, ListDirection, ListState};
 use ratatui::{
     Frame,
     layout::Rect,
@@ -9,6 +9,9 @@ use ratatui::{
 use crate::state::{AppState, Focus};
 
 pub fn draw_search_results(frame: &mut Frame, area: Rect, app: &AppState) {
+    let mut state = ListState::default();
+    state.select(app.search_selected);
+
     let search_results_block = if matches!(app.focus, Focus::SearchResults) {
         Block::default()
             .borders(Borders::ALL)
@@ -22,18 +25,20 @@ pub fn draw_search_results(frame: &mut Frame, area: Rect, app: &AppState) {
 
     let cities: Vec<String> = app
         .search_results
-        .clone()
-        .into_iter()
-        .map(|city| city.name)
+        .iter()
+        .map(|city| format!("City: {}/ Country: {}", city.name, city.country))
         .collect();
 
     let list = List::new(cities)
         .block(search_results_block)
-        .style(Style::new().fg(Color::White))
-        .highlight_style(Style::new().add_modifier(Modifier::ITALIC))
-        .highlight_symbol(">>")
+        .highlight_style(
+            Style::new()
+                .add_modifier(Modifier::ITALIC)
+                .bg(Color::LightYellow),
+        )
+        .highlight_symbol(">")
         .repeat_highlight_symbol(true)
         .direction(ListDirection::TopToBottom);
 
-    frame.render_widget(list, area);
+    frame.render_stateful_widget(list, area, &mut state);
 }

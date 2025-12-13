@@ -2,6 +2,7 @@ use std::error::Error;
 
 use crossterm::event::{Event, KeyCode};
 
+use crate::events::handle_city_pick;
 use crate::events::input_events::handle_input_key;
 use crate::state::{AppState, Focus};
 
@@ -19,7 +20,7 @@ pub fn read_event(event: Event, app_state: &mut AppState) -> Result<bool, Box<dy
                     handle_input_key(app_state, key_event.code)?;
                 }
                 Focus::SearchResults => {
-                    todo!()
+                    handle_city_pick(app_state, key_event.code);
                 }
                 Focus::History => {
                     todo!()

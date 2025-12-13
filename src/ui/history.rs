@@ -25,7 +25,7 @@ pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
         .highlight_style(Style::new().add_modifier(Modifier::ITALIC))
         .highlight_symbol(">>")
         .repeat_highlight_symbol(true)
-        .direction(ListDirection::BottomToTop);
+        .direction(ListDirection::TopToBottom);
 
     frame.render_widget(list, area);
 }

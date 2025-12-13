@@ -15,7 +15,8 @@ pub struct AppState {
     pub history: Vec<String>,
     pub history_selected: Option<usize>,
     pub search_results: Vec<CitySearchResult>,
-    pub selected: Option<usize>,
+    pub search_selected: Option<usize>,
+    pub curren_city: Option<CitySearchResult>,
 }
 
 impl AppState {
@@ -31,7 +32,8 @@ impl AppState {
             ],
             history_selected: Some(0),
             search_results: vec![],
-            selected: None,
+            search_selected: None,
+            curren_city: None,
         }
     }
 
