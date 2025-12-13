@@ -9,7 +9,6 @@ pub fn search_cities(query: &str) -> Result<GeocodingResponse, Box<dyn std::erro
     let client = reqwest::blocking::Client::new();
     let response = client.get(request_url).send()?;
     let geocoding = response.json()?;
-    //let geocoding: GeocodingResponse = serde_json::from_str(&text)?;
 
     Ok(geocoding)
 }

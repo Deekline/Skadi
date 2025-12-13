@@ -2,13 +2,13 @@ use std::error::Error;
 
 use crate::{
     services::search_cities,
-    state::{AppState, CitySearchResult, GeocodingResponse, GeocodingResult},
+    state::{AppState, CitySearchResult},
 };
 
 pub fn get_cities_by_name(app: &mut AppState) -> Result<(), Box<dyn Error>> {
     let query = app.city_input.to_string();
     if query.trim().is_empty() {
-        return Ok(()); // ignore empty input
+        return Ok(());
     }
     let cities = search_cities(&query).map_err(|e| {
         eprintln!("Error fetching cities: {e}");
@@ -30,7 +30,6 @@ pub fn get_cities_by_name(app: &mut AppState) -> Result<(), Box<dyn Error>> {
         })
         .collect();
 
-    println!("Done!");
     app.search_results = parsed_cities;
 
     Ok(())

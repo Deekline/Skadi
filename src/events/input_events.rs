@@ -1,8 +1,13 @@
+use std::error::Error;
+
 use crate::{controllers::get_cities_by_name, state::AppState};
 use crossterm::event::KeyCode;
 use tui_input::InputRequest;
 
-pub fn handle_input_key(app_state: &mut AppState, key_event: KeyCode) {
+pub fn handle_input_key(
+    app_state: &mut AppState,
+    key_event: KeyCode,
+) -> Result<(), Box<dyn Error>> {
     match key_event {
         KeyCode::Backspace => {
             app_state.city_input.handle(InputRequest::DeletePrevChar);
@@ -11,8 +16,9 @@ pub fn handle_input_key(app_state: &mut AppState, key_event: KeyCode) {
             app_state.city_input.handle(InputRequest::InsertChar(c));
         }
         KeyCode::Enter => {
-            get_cities_by_name(app_state);
+            get_cities_by_name(app_state)?;
         }
         _ => println!("Event"),
     }
+    Ok(())
 }

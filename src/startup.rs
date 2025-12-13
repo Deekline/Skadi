@@ -1,5 +1,5 @@
 use crate::{events::read_event, state::AppState, ui::render};
-use crossterm::event::{self, Event};
+use crossterm::event;
 use ratatui::DefaultTerminal;
 use std::io::Result;
 
@@ -10,8 +10,16 @@ pub fn run(mut terminal: DefaultTerminal) -> Result<()> {
 
         let event = event::read()?;
         let should_break = read_event(event, &mut app_state);
-        if should_break {
-            break;
+        match should_break {
+            Ok(should_exit) => {
+                if should_exit {
+                    break;
+                }
+            }
+            Err(e) => {
+                println!("Error: {}", e);
+                break;
+            }
         }
     }
     Ok(())
