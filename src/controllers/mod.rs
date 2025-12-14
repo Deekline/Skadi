@@ -1,3 +1,5 @@
-pub mod city_search;
+pub mod search_controller;
+pub mod weather_controller;
 
-pub use city_search::get_cities_by_name;
+pub use search_controller::get_cities_by_name;
+pub use weather_controller::get_weather_by_geo;

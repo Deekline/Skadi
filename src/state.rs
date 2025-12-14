@@ -77,14 +77,55 @@ pub struct GeocodingResponse {
     pub results: Vec<GeocodingResult>,
 }
 
-#[derive(Clone)]
 pub struct CitySearchResult {
     pub name: String,
     pub country: String,
     pub country_code: String,
     pub admin1: Option<String>,
-    pub lat: f64,
-    pub lon: f64,
+    pub coordinates: GeoCoordinates,
     pub timezone: String,
     pub is_favorite: bool,
+}
+
+pub struct GeoCoordinates {
+    pub lat: f64,
+    pub lon: f64,
+}
+
+pub struct CurrentWeather {
+    time: String,
+    interval: i32,
+    temperature_2m: f32,
+    apparent_temperature: f32,
+    relative_humidity_2m: i32,
+    precipitation: f32,
+    weather_code: i16,
+    wind_speed_10m: f32,
+    wind_direction_0m: Option<i32>,
+    visibility: f32,
+}
+
+pub struct HourlyWeather {
+    time: Vec<String>,
+    temperature: Vec<f32>,
+    humidity: Vec<i32>,
+    weather_code: Vec<i32>,
+    precipitation: Vec<f32>,
+    precipitation_probability: Vec<i32>,
+    wind_speed: Vec<f32>,
+}
+
+pub struct DailyWeather {
+    date: Vec<String>,
+    min_temp: Vec<f32>,
+    max_temp: Vec<f32>,
+    weather_code: Vec<i32>,
+    precipitation_sum: Vec<f32>,
+    precipitation_probability_max: Vec<i32>,
+}
+
+pub struct Weather {
+    current: CurrentWeather,
+    hourly: HourlyWeather,
+    daily: DailyWeather,
 }
