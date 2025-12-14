@@ -1,4 +1,4 @@
-use crate::state::AppState;
+use crate::{controllers::get_weather_by_geo, state::AppState};
 use crossterm::event::KeyCode;
 
 pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode) {
@@ -21,8 +21,10 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode) {
             }
         }
         KeyCode::Enter => {
-            todo!()
+            get_weather_by_geo(app);
         }
-        _ => println!("Event"),
+        _ => {
+            return;
+        }
     };
 }
