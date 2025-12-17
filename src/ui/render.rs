@@ -1,8 +1,8 @@
 use crate::{
     state::{AppState, Weather},
     ui::{
-        draw_city_input, draw_current_weather, favorites::draw_favorites, history::draw_history,
-        search_results::draw_search_results,
+        draw_city_input, draw_current_weather, draw_detailed_weather, favorites::draw_favorites,
+        history::draw_history, search_results::draw_search_results,
     },
 };
 use ratatui::{
@@ -18,6 +18,7 @@ pub struct LayoutAreas {
     pub history_area: Rect,
     pub favorites_area: Rect,
     pub current_area: Rect,
+    pub details_area: Rect,
     pub forecast_area: Rect,
 }
 
@@ -41,8 +42,12 @@ fn compute_layout(area: Rect) -> LayoutAreas {
     ])
     .areas(sidebar_area);
 
-    let [current_area, forecast_area] =
-        Layout::vertical([Constraint::Min(0), Constraint::Length(10)]).areas(content_area);
+    let [current_area, details_area, forecast_area] = Layout::vertical([
+        Constraint::Min(0),
+        Constraint::Length(10),
+        Constraint::Length(10),
+    ])
+    .areas(content_area);
 
     LayoutAreas {
         bottom_bar_area,
@@ -52,6 +57,7 @@ fn compute_layout(area: Rect) -> LayoutAreas {
         favorites_area,
         current_area,
         forecast_area,
+        details_area,
     }
 }
 
@@ -63,6 +69,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     draw_history(frame, areas.history_area, app);
     draw_favorites(frame, areas.favorites_area, app);
     draw_current_weather(frame, areas.current_area, app);
+    draw_detailed_weather(frame, areas.details_area, app);
 
     // Placeholder
     frame.render_widget(
@@ -78,6 +85,11 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     frame.render_widget(
         Block::default().borders(Borders::ALL).title("Forecast"),
         areas.forecast_area,
+    );
+
+    frame.render_widget(
+        Block::default().borders(Borders::ALL).title("Details"),
+        areas.details_area,
     );
 
     frame.render_widget(
