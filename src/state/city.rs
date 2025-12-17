@@ -17,6 +17,7 @@ pub struct GeocodingResponse {
     pub results: Vec<GeocodingResult>,
 }
 
+#[derive(Clone)]
 pub struct CitySearchResult {
     pub name: String,
     pub country: String,
@@ -27,6 +28,7 @@ pub struct CitySearchResult {
     pub is_favorite: bool,
 }
 
+#[derive(Clone)]
 pub struct GeoCoordinates {
     pub lat: f64,
     pub lon: f64,

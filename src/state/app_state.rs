@@ -17,7 +17,7 @@ pub struct AppState {
     pub history_selected: Option<usize>,
     pub search_results: Vec<CitySearchResult>,
     pub search_selected: Option<usize>,
-    pub curren_city: Option<CitySearchResult>,
+    pub current_city: Option<CitySearchResult>,
     pub weather: Option<Weather>,
     pub weather_error: Option<String>,
 }
@@ -36,7 +36,7 @@ impl AppState {
             history_selected: Some(0),
             search_results: vec![],
             search_selected: None,
-            curren_city: None,
+            current_city: None,
             weather: None,
             weather_error: None,
         }

@@ -56,13 +56,12 @@ pub fn get_weather_by_geo(state: &mut AppState) {
     match get_weather(&city.coordinates.lat, &city.coordinates.lon) {
         Ok(weather) => {
             let parsed_weather = parse_weather(weather);
-            println!("Parsed weather: {:?}", &parsed_weather);
+            state.current_city = Some(city.clone());
             state.weather = Some(parsed_weather);
             state.weather_error = None;
         }
         Err(err) => {
             state.weather = None;
-            println!("Error: {:?}", err);
             state.weather_error = Some(err.to_string());
         }
     }

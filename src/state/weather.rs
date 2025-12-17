@@ -2,6 +2,8 @@ use serde::Deserialize;
 use serde::Serialize;
 use serde::de;
 
+use crate::services::weather;
+
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct WeatherResponse {
     pub latitude: f64,

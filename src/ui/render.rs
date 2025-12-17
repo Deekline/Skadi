@@ -1,7 +1,7 @@
 use crate::{
-    state::AppState,
+    state::{AppState, Weather},
     ui::{
-        draw_city_input, favorites::draw_favorites, history::draw_history,
+        draw_city_input, draw_current_weather, favorites::draw_favorites, history::draw_history,
         search_results::draw_search_results,
     },
 };
@@ -62,6 +62,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     draw_search_results(frame, areas.search_results_area, app);
     draw_history(frame, areas.history_area, app);
     draw_favorites(frame, areas.favorites_area, app);
+    draw_current_weather(frame, areas.current_area, app);
 
     // Placeholder
     frame.render_widget(
@@ -72,11 +73,6 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     frame.render_widget(
         Block::default().borders(Borders::ALL).title("Favorites"),
         areas.favorites_area,
-    );
-
-    frame.render_widget(
-        Block::default().borders(Borders::ALL).title("Current"),
-        areas.current_area,
     );
 
     frame.render_widget(
