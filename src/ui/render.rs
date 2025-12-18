@@ -1,8 +1,8 @@
 use crate::{
     state::{AppState, Weather},
     ui::{
-        draw_city_input, draw_current_weather, draw_detailed_weather, favorites::draw_favorites,
-        history::draw_history, search_results::draw_search_results,
+        draw_city_input, draw_current_weather, draw_detailed_weather, draw_forecast,
+        favorites::draw_favorites, history::draw_history, search_results::draw_search_results,
     },
 };
 use ratatui::{
@@ -70,6 +70,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     draw_favorites(frame, areas.favorites_area, app);
     draw_current_weather(frame, areas.current_area, app);
     draw_detailed_weather(frame, areas.details_area, app);
+    draw_forecast(frame, areas.forecast_area, app);
 
     // Placeholder
     frame.render_widget(
@@ -80,11 +81,6 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     frame.render_widget(
         Block::default().borders(Borders::ALL).title("Favorites"),
         areas.favorites_area,
-    );
-
-    frame.render_widget(
-        Block::default().borders(Borders::ALL).title("Forecast"),
-        areas.forecast_area,
     );
 
     frame.render_widget(
