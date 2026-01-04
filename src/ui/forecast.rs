@@ -1,4 +1,4 @@
-use chrono::{Datelike, NaiveDate};
+use chrono::NaiveDate;
 use ratatui::{
     Frame,
     layout::{Alignment, Rect},

@@ -47,11 +47,16 @@ fn parse_weather(weather_response: WeatherResponse) -> Weather {
 }
 
 pub fn get_weather_by_geo(state: &mut AppState) {
-    let Some(selected_idx) = state.search_selected else {
-        return;
-    };
-    let Some(city) = state.search_results.get(selected_idx) else {
-        return;
+    let city = if let Some(fav) = state.favorite.as_ref() {
+        fav
+    } else {
+        let Some(selected_idx) = state.search_selected else {
+            return;
+        };
+        let Some(city) = state.search_results.get(selected_idx) else {
+            return;
+        };
+        city
     };
     match get_weather(&city.coordinates.lat, &city.coordinates.lon) {
         Ok(weather) => {

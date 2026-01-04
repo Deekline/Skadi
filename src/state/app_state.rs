@@ -1,6 +1,9 @@
 use tui_input::Input;
 
-use crate::state::{CitySearchResult, Weather};
+use crate::{
+    configuration::Config,
+    state::{CitySearchResult, Weather},
+};
 
 pub enum Focus {
     Input,
@@ -13,32 +16,30 @@ pub struct AppState {
     pub city_input: Input,
     pub exit: bool,
     pub focus: Focus,
-    pub history: Vec<String>,
+    pub history: Vec<CitySearchResult>,
     pub history_selected: Option<usize>,
     pub search_results: Vec<CitySearchResult>,
     pub search_selected: Option<usize>,
     pub current_city: Option<CitySearchResult>,
     pub weather: Option<Weather>,
     pub weather_error: Option<String>,
+    pub favorite: Option<CitySearchResult>,
 }
 
 impl AppState {
-    pub fn new() -> Self {
+    pub fn new(config: Config) -> Self {
         Self {
             city_input: Input::new("".to_string()),
             exit: false,
             focus: Focus::Input,
-            history: vec![
-                "Poltava".to_string(),
-                "Wroclaw".to_string(),
-                "Kyiv".to_string(),
-            ],
+            history: config.history,
             history_selected: Some(0),
             search_results: vec![],
             search_selected: None,
             current_city: None,
             weather: None,
             weather_error: None,
+            favorite: config.favorite,
         }
     }
 

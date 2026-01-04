@@ -26,11 +26,7 @@ pub fn get_cities_by_name(app: &mut AppState) -> Result<(), Box<dyn Error>> {
             CitySearchResult {
                 name: city.name,
                 country: city.country,
-                country_code: city.country_code,
-                admin1: city.admin1,
                 coordinates,
-                timezone: city.timezone,
-                is_favorite: false,
             }
         })
         .collect();

@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug)]
 pub struct GeocodingResult {
@@ -17,18 +17,14 @@ pub struct GeocodingResponse {
     pub results: Vec<GeocodingResult>,
 }
 
-#[derive(Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct CitySearchResult {
     pub name: String,
     pub country: String,
-    pub country_code: String,
-    pub admin1: Option<String>,
     pub coordinates: GeoCoordinates,
-    pub timezone: String,
-    pub is_favorite: bool,
 }
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct GeoCoordinates {
     pub lat: f64,
     pub lon: f64,
