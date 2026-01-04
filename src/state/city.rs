@@ -17,14 +17,14 @@ pub struct GeocodingResponse {
     pub results: Vec<GeocodingResult>,
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug)]
+#[derive(Deserialize, Serialize, Clone, PartialEq, Debug)]
 pub struct CitySearchResult {
     pub name: String,
     pub country: String,
     pub coordinates: GeoCoordinates,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
 pub struct GeoCoordinates {
     pub lat: f64,
     pub lon: f64,

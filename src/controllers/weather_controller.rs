@@ -1,4 +1,5 @@
 use crate::{
+    configuration::Config,
     services::get_weather,
     state::{
         AppState, Weather, WeatherResponse,
@@ -47,23 +48,32 @@ fn parse_weather(weather_response: WeatherResponse) -> Weather {
 }
 
 pub fn get_weather_by_geo(state: &mut AppState) {
-    let city = if let Some(fav) = state.favorite.as_ref() {
-        fav
-    } else {
-        let Some(selected_idx) = state.search_selected else {
-            return;
-        };
+    let city = if let Some(selected_idx) = state.search_selected {
         let Some(city) = state.search_results.get(selected_idx) else {
             return;
         };
         city
+    } else if let Some(fav) = state.favorite.as_ref() {
+        fav
+    } else {
+        return;
     };
     match get_weather(&city.coordinates.lat, &city.coordinates.lon) {
         Ok(weather) => {
             let parsed_weather = parse_weather(weather);
+            let city = city.clone();
             state.current_city = Some(city.clone());
             state.weather = Some(parsed_weather);
             state.weather_error = None;
+
+            state.history.retain(|c| c != &city);
+            state.history.insert(0, city.clone());
+            state.history.truncate(20);
+            state.history_selected = Some(0);
+
+            if let Err(err) = Config::save_history(city.clone()) {
+                eprintln!("Failed to save history: {err}");
+            }
         }
         Err(err) => {
             state.weather = None;
