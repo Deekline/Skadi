@@ -2,7 +2,7 @@ use crate::{
     configuration::Config,
     services::get_weather,
     state::{
-        AppState, Weather, WeatherResponse,
+        AppState, CitySearchResult, Weather, WeatherResponse,
         weather::{CurrentWeather, DailyWeather, HourlyWeather},
     },
 };
@@ -47,15 +47,23 @@ fn parse_weather(weather_response: WeatherResponse) -> Weather {
     }
 }
 
-pub fn get_weather_by_geo(state: &mut AppState) {
-    let city = if let Some(selected_idx) = state.search_selected {
-        let Some(city) = state.search_results.get(selected_idx) else {
-            return;
-        };
-        city
-    } else if let Some(fav) = state.favorite.as_ref() {
-        fav
-    } else {
+#[derive(Clone, Copy, Debug)]
+pub enum CitySelection {
+    Search(usize),
+    Favorite,
+    History(usize),
+}
+
+fn selected_city(state: &AppState, selected: CitySelection) -> Option<CitySearchResult> {
+    match selected {
+        CitySelection::Search(i) => state.search_results.get(i).cloned(),
+        CitySelection::Favorite => state.favorite.clone(),
+        CitySelection::History(i) => state.history.get(i).cloned(),
+    }
+}
+
+pub fn get_weather_by_geo(state: &mut AppState, city_selected: CitySelection) {
+    let Some(city) = selected_city(state, city_selected) else {
         return;
     };
     match get_weather(&city.coordinates.lat, &city.coordinates.lon) {
