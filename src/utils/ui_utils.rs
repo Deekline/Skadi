@@ -31,7 +31,7 @@ pub fn big_text(s: &str) -> [String; 5] {
         let g = glyph_4x5(ch);
         for i in 0..5 {
             rows[i].push_str(g[i]);
-            rows[i].push(' '); // spacing between glyphs
+            rows[i].push(' ');
         }
     }
     rows

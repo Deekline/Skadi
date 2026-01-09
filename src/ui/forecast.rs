@@ -1,3 +1,5 @@
+use crate::utils::chrono_utils::weekday_from_date;
+use crate::utils::weather_utils::weather_icon_and_label;
 use chrono::NaiveDate;
 use ratatui::{
     Frame,
@@ -6,32 +8,6 @@ use ratatui::{
 };
 
 use crate::state::AppState;
-
-fn weekday_from_date(date: &str) -> Option<String> {
-    let d = NaiveDate::parse_from_str(date, "%Y-%m-%d").ok()?;
-    Some(d.format("%A").to_string())
-}
-
-//TODO move it to utilities module
-fn weather_icon_and_label(code: Option<i64>) -> (&'static str, &'static str) {
-    match code {
-        Some(0) => ("☀️", "Clear"),
-        Some(1 | 2) => ("🌤️", "Mostly Clear"),
-        Some(3) => ("☁️", "Cloudy"),
-        Some(45 | 48) => ("🌫️", "Fog"),
-        Some(51 | 53 | 55) => ("🌦️", "Drizzle"),
-        Some(61 | 63 | 65) => ("🌧️", "Rain"),
-        Some(66 | 67) => ("🌧️❄️", "Freezing Rain"),
-        Some(71 | 73 | 75) => ("❄️", "Snow"),
-        Some(77) => ("🌨️", "Snow Grains"),
-        Some(80 | 81 | 82) => ("🌦️", "Rain Showers"),
-        Some(85 | 86) => ("🌨️", "Snow Showers"),
-        Some(95) => ("⛈️", "Thunderstorm"),
-        Some(96 | 99) => ("⛈️⚡", "Thunderstorm w/ Hail"),
-        None => ("?", "Unknown"),
-        _ => ("?", "Unknown"),
-    }
-}
 
 fn push_formated_string(row: &mut String, value: String, width: usize) {
     row.push_str(&format!("{:^width$}", value));
