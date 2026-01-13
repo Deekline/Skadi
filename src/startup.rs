@@ -5,9 +5,9 @@ use crate::{
     state::AppState,
     ui::render,
 };
+use anyhow::Result;
 use crossterm::event;
 use ratatui::DefaultTerminal;
-use std::io::Result;
 
 pub fn run(mut terminal: DefaultTerminal) -> Result<()> {
     let configuration = Config::load_config();

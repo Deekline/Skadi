@@ -1,4 +1,4 @@
-use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
+use chrono::{DateTime, NaiveDate, NaiveDateTime};
 
 pub fn hhmm(s: &str) -> String {
     if let Ok(dt) = DateTime::parse_from_rfc3339(s) {

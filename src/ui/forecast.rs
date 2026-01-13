@@ -1,6 +1,5 @@
 use crate::utils::chrono_utils::weekday_from_date;
 use crate::utils::weather_utils::weather_icon_and_label;
-use chrono::NaiveDate;
 use ratatui::{
     Frame,
     layout::{Alignment, Rect},

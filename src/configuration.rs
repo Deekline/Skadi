@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use crate::state::CitySearchResult;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
@@ -23,20 +24,19 @@ impl Config {
         }
     }
 
-    pub fn save_config(&self) -> std::io::Result<()> {
+    pub fn save_config(&self) -> Result<()> {
         let path = Self::config_path();
         if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent)?;
+            fs::create_dir_all(parent).context("create config directory")?;
         }
 
-        let data = ron::to_string(self)
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+        let data = ron::to_string(self).context("serialize config")?;
 
-        fs::write(path, data)?;
+        fs::write(path, data).context("write config")?;
         Ok(())
     }
 
-    pub fn save_history(city: CitySearchResult) -> std::io::Result<()> {
+    pub fn save_history(city: CitySearchResult) -> Result<()> {
         let mut cfg = Self::load_config();
 
         cfg.history.retain(|c| c != &city);

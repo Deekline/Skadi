@@ -1,19 +1,15 @@
-use std::error::Error;
-
 use crate::{
     services::search_cities,
     state::{AppState, CitySearchResult, GeoCoordinates},
 };
+use anyhow::Result;
 
-pub fn get_cities_by_name(app: &mut AppState) -> Result<(), Box<dyn Error>> {
+pub fn get_cities_by_name(app: &mut AppState) -> Result<()> {
     let query = app.city_input.to_string();
     if query.trim().is_empty() {
         return Ok(());
     }
-    let cities = search_cities(&query).map_err(|e| {
-        eprintln!("Error fetching cities: {e}");
-        e
-    })?;
+    let cities = search_cities(&query)?;
 
     let parsed_cities = cities
         .results

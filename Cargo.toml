@@ -11,7 +11,7 @@ path = "src/main.rs"
 name = "weather"
 
 [dependencies]
-color-eyre = "0.6.3"
+anyhow = "1"
 crossterm = "0.28.1"
 ratatui = "0.29.0"
 tui-input = "0.14.0"

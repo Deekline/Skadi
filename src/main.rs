@@ -1,8 +1,7 @@
-use color_eyre::Result;
+use anyhow::Result;
 use weather::startup::run;
 
 fn main() -> Result<()> {
-    color_eyre::install()?;
     let terminal = ratatui::init();
     let result = run(terminal);
     ratatui::restore();
