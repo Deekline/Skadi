@@ -1,6 +1,6 @@
-use anyhow::Result;
 use crate::controllers::{CitySelection, get_cities_by_name, get_weather_by_geo};
 use crate::state::{AppState, CitySearchResult, Focus};
+use anyhow::Result;
 use crossterm::event::{Event, KeyCode};
 use tui_input::InputRequest;
 
@@ -104,10 +104,7 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
     };
 }
 
-pub fn handle_input_key(
-    app_state: &mut AppState,
-    key_event: KeyCode,
-) -> Result<()> {
+pub fn handle_input_key(app_state: &mut AppState, key_event: KeyCode) -> Result<()> {
     match key_event {
         KeyCode::Backspace => {
             app_state.city_input.handle(InputRequest::DeletePrevChar);

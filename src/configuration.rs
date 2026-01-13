@@ -1,5 +1,5 @@
-use anyhow::{Context, Result};
 use crate::state::CitySearchResult;
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 

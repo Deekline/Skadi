@@ -1,40 +1,28 @@
 use crate::{
     state::{AppState, weather::CurrentWeather},
     utils::chrono_utils::hhmm,
-    utils::ui_utils::big_text,
+    utils::ui_utils::{Theme, big_text},
     utils::weather_utils::weather_icon_and_label,
 };
 
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
 };
 
-fn build_big_temp_lines(w: &CurrentWeather) -> Vec<Line<'static>> {
-    let accent = Style::default()
-        .fg(Color::Cyan)
-        .add_modifier(Modifier::BOLD);
-
+fn build_big_temp_lines(w: &CurrentWeather, theme: &Theme) -> Vec<Line<'static>> {
     let temp_str = format!("{:.1}°C", w.temperature_2m);
     let big = big_text(&temp_str);
 
     let pad = "  ";
     big.iter()
-        .map(|row| Line::from(Span::styled(format!("{pad}{row}"), accent)))
+        .map(|row| Line::from(Span::styled(format!("{pad}{row}"), theme.accent)))
         .collect()
 }
 
-fn build_additional_info_lines(w: &CurrentWeather) -> Vec<Line<'static>> {
-    let accent = Style::default()
-        .fg(Color::Cyan)
-        .add_modifier(Modifier::BOLD);
-    let label = Style::default().fg(Color::DarkGray);
-    let value = Style::default().fg(Color::White);
-    let subtle = Style::default().fg(Color::Gray);
-
+fn build_additional_info_lines(w: &CurrentWeather, theme: &Theme) -> Vec<Line<'static>> {
     // Open-Meteo visibility is meters; convert to km (your sample shows 15.7 km)
     let vis_km = w.visibility / 1000.0;
 
@@ -46,36 +34,31 @@ fn build_additional_info_lines(w: &CurrentWeather) -> Vec<Line<'static>> {
 
     vec![
         Line::from(vec![
-            Span::styled("feels like ", subtle),
-            Span::styled(format!("{:.1}°C", w.apparent_temperature), value),
+            Span::styled("feels like ", theme.subtle),
+            Span::styled(format!("{:.1}°C", w.apparent_temperature), theme.default),
         ]),
-        Line::from(Span::styled(format!("{} - {}", icon, desc), subtle)),
+        Line::from(Span::styled(format!("{} - {}", icon, desc), theme.subtle)),
         Line::from(""),
         Line::from(vec![
-            Span::styled("Wind ", accent),
-            Span::styled(format!("{:.1} km/h", w.wind_speed_10m), value),
-            Span::styled("  ·  ", label),
-            Span::styled("Dir ", label),
-            Span::styled(wind_dir, value),
-            Span::styled("  ·  ", label),
-            Span::styled("Hum ", label),
-            Span::styled(format!("{}%", w.relative_humidity_2m), value),
-            Span::styled("  ·  ", label),
-            Span::styled("Precip ", label),
-            Span::styled(format!("{:.1}", w.precipitation), value),
-            Span::styled("  ·  ", label),
-            Span::styled("Vis ", label),
-            Span::styled(format!("{:.1} km", vis_km), value),
+            Span::styled("Wind ", theme.accent),
+            Span::styled(format!("{:.1} km/h", w.wind_speed_10m), theme.default),
+            Span::styled("  ·  ", theme.label),
+            Span::styled("Dir ", theme.label),
+            Span::styled(wind_dir, theme.default),
+            Span::styled("  ·  ", theme.label),
+            Span::styled("Hum ", theme.label),
+            Span::styled(format!("{}%", w.relative_humidity_2m), theme.default),
+            Span::styled("  ·  ", theme.label),
+            Span::styled("Precip ", theme.label),
+            Span::styled(format!("{:.1}", w.precipitation), theme.default),
+            Span::styled("  ·  ", theme.label),
+            Span::styled("Vis ", theme.label),
+            Span::styled(format!("{:.1} km", vis_km), theme.default),
         ]),
     ]
 }
 
-fn build_details_lines(w: &CurrentWeather, area_width: u16) -> Vec<Line<'static>> {
-    let accent = Style::default()
-        .fg(Color::Cyan)
-        .add_modifier(Modifier::BOLD);
-    let value = Style::default().fg(Color::White);
-
+fn build_details_lines(w: &CurrentWeather, area_width: u16, theme: &Theme) -> Vec<Line<'static>> {
     let vis_km = w.visibility / 1000.0;
 
     let fill_width = area_width.saturating_sub(2) as usize;
@@ -105,34 +88,35 @@ fn build_details_lines(w: &CurrentWeather, area_width: u16) -> Vec<Line<'static>
     }
 
     vec![
-        Line::from(Span::styled(sep, accent)),
+        Line::from(Span::styled(sep, theme.accent)),
         Line::from(""),
-        Line::from(Span::styled(join_two_col(left1, right1, col2_start), value)),
-        Line::from(Span::styled(join_two_col(left2, right2, col2_start), value)),
-        Line::from(Span::styled(join_two_col(left3, right3, col2_start), value)),
+        Line::from(Span::styled(
+            join_two_col(left1, right1, col2_start),
+            theme.default,
+        )),
+        Line::from(Span::styled(
+            join_two_col(left2, right2, col2_start),
+            theme.default,
+        )),
+        Line::from(Span::styled(
+            join_two_col(left3, right3, col2_start),
+            theme.default,
+        )),
     ]
 }
 
 pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
+    let theme = Theme::default();
+
     let title = match (app.current_city.as_ref(), app.weather.as_ref()) {
         (Some(city), Some(w)) => Line::from(vec![
-            Span::styled(
-                format!("{}, {}", city.name, city.country),
-                Style::default()
-                    .fg(Color::Cyan)
-                    .add_modifier(Modifier::BOLD),
-            ),
+            Span::styled(format!("{}, {}", city.name, city.country), theme.accent),
             Span::raw("  "),
-            Span::styled(
-                format!("Updated {}", hhmm(&w.current.time)),
-                Style::default().fg(Color::White),
-            ),
+            Span::styled(format!("Updated {}", hhmm(&w.current.time)), theme.default),
         ]),
         (Some(city), None) => Line::from(Span::styled(
             format!("{}, {}", city.name, city.country),
-            Style::default()
-                .fg(Color::Cyan)
-                .add_modifier(Modifier::BOLD),
+            theme.accent,
         )),
         _ => Line::from("Current Weather"),
     };
@@ -151,10 +135,7 @@ pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
     if let Some(err) = app.weather_error.as_ref() {
         frame.render_widget(
             Paragraph::new(vec![
-                Line::from(Span::styled(
-                    "Error loading weather:",
-                    Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                )),
+                Line::from(Span::styled("Error loading weather:", theme.error)),
                 Line::from(err.as_str()),
             ])
             .wrap(Wrap { trim: true }),
@@ -182,16 +163,16 @@ pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
         ])
         .split(inner);
 
-    let big_lines = build_big_temp_lines(w);
+    let big_lines = build_big_temp_lines(w, &theme);
     frame.render_widget(Paragraph::new(big_lines), chunks[0]);
 
-    let info_lines = build_additional_info_lines(w);
+    let info_lines = build_additional_info_lines(w, &theme);
     frame.render_widget(
         Paragraph::new(info_lines).wrap(Wrap { trim: true }),
         chunks[1],
     );
 
-    let details_lines = build_details_lines(w, chunks[2].width);
+    let details_lines = build_details_lines(w, chunks[2].width, &theme);
     frame.render_widget(
         Paragraph::new(details_lines).wrap(Wrap { trim: true }),
         chunks[2],

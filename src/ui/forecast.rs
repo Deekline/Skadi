@@ -30,7 +30,7 @@ pub fn draw_forecast(frame: &mut Frame, area: Rect, state: &AppState) {
     let precipitation_prob = &weather.daily.precipitation_probability_max;
     let precipitation = &weather.daily.precipitation_sum;
 
-    if dates.len() == 0 {
+    if dates.is_empty() {
         let p = Paragraph::new("Daily data is empty")
             .alignment(Alignment::Left)
             .wrap(Wrap { trim: true })

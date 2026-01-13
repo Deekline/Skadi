@@ -1,4 +1,3 @@
-use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{List, ListDirection, ListState, Paragraph, Wrap};
 use ratatui::{
     Frame,
@@ -7,12 +6,15 @@ use ratatui::{
 };
 
 use crate::state::{AppState, Focus};
+use crate::utils::ui_utils::Theme;
 
 pub fn draw_favorites(frame: &mut Frame, area: Rect, app: &AppState) {
+    let theme = Theme::default();
+
     let favorites_block = if matches!(app.focus, Focus::Favorites) {
         Block::default()
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(Color::Green))
+            .border_style(theme.border_active)
             .title("Favorites *")
     } else {
         Block::default().borders(Borders::ALL).title("Favorites")
@@ -28,12 +30,8 @@ pub fn draw_favorites(frame: &mut Frame, area: Rect, app: &AppState) {
 
         let list = List::new(cities)
             .block(favorites_block)
-            .style(Style::new().fg(Color::White))
-            .highlight_style(
-                Style::new()
-                    .add_modifier(Modifier::ITALIC)
-                    .bg(Color::LightYellow),
-            )
+            .style(theme.list_item)
+            .highlight_style(theme.list_highlight)
             .highlight_symbol(">")
             .repeat_highlight_symbol(true)
             .direction(ListDirection::TopToBottom);

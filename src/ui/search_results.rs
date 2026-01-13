@@ -1,4 +1,3 @@
-use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{List, ListDirection, ListState};
 use ratatui::{
     Frame,
@@ -7,15 +6,18 @@ use ratatui::{
 };
 
 use crate::state::{AppState, Focus};
+use crate::utils::ui_utils::Theme;
 
 pub fn draw_search_results(frame: &mut Frame, area: Rect, app: &AppState) {
+    let theme = Theme::default();
+
     let mut state = ListState::default();
     state.select(app.search_selected);
 
     let search_results_block = if matches!(app.focus, Focus::SearchResults) {
         Block::default()
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(Color::Green))
+            .border_style(theme.border_active)
             .title("Search Results *")
     } else {
         Block::default()
@@ -31,11 +33,8 @@ pub fn draw_search_results(frame: &mut Frame, area: Rect, app: &AppState) {
 
     let list = List::new(cities)
         .block(search_results_block)
-        .highlight_style(
-            Style::new()
-                .add_modifier(Modifier::ITALIC)
-                .bg(Color::LightYellow),
-        )
+        .style(theme.list_item)
+        .highlight_style(theme.list_highlight)
         .highlight_symbol(">")
         .repeat_highlight_symbol(true)
         .direction(ListDirection::TopToBottom);

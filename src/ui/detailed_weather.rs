@@ -1,4 +1,6 @@
 use crate::state::AppState;
+use crate::utils::weather_utils::weather_icon_and_label;
+
 use ratatui::layout::Alignment;
 use ratatui::widgets::{Paragraph, Wrap};
 use ratatui::{
@@ -30,6 +32,7 @@ pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
     let times = &weather.hourly.time;
     let temps = &weather.hourly.temperature;
     let humidity = &weather.hourly.humidity;
+    let weather_code = &weather.hourly.weather_code;
 
     let total = times.len().min(temps.len());
     if total == 0 {
@@ -46,7 +49,7 @@ pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
     let visible = total.min(max_cols);
 
     let mut row_time = String::new();
-    let mut row_mid = String::new();
+    let mut row_icon = String::new();
     let mut row_temp = String::new();
     let mut row_hum = String::new();
 
@@ -54,7 +57,9 @@ pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
         let hour = extract_hour(&times[i]).unwrap_or("??");
 
         row_time.push_str(&format!("{:^width$}", hour, width = col_w as usize));
-        row_mid.push_str(&" ".repeat(col_w as usize));
+
+        let (icon, _) = weather_icon_and_label(Some(weather_code[i]));
+        row_icon.push_str(&format!("{:^width$}", icon, width = col_w as usize));
 
         let t = temps[i].round() as i64;
         let t_cell = format!("{t}°");
@@ -65,7 +70,7 @@ pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
         row_hum.push_str(&format!("{:^width$}", h_cell, width = col_w as usize));
     }
 
-    let content = format!("{row_time}\n{row_mid}\n{row_temp}\n{row_hum}");
+    let content = format!("{row_time}\n{row_icon}\n{row_temp}\n{row_hum}");
 
     let paragraph = Paragraph::new(content)
         .alignment(Alignment::Left)

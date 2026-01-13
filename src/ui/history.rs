@@ -1,4 +1,3 @@
-use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{List, ListDirection, ListState};
 use ratatui::{
     Frame,
@@ -7,8 +6,11 @@ use ratatui::{
 };
 
 use crate::state::{AppState, Focus};
+use crate::utils::ui_utils::Theme;
 
 pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
+    let theme = Theme::default();
+
     let mut state = ListState::default();
     let selected = app.history_selected.filter(|&idx| idx < app.history.len());
     state.select(selected);
@@ -16,7 +18,7 @@ pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
     let history_block = if matches!(app.focus, Focus::History) {
         Block::default()
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(Color::Green))
+            .border_style(theme.border_active)
             .title("History *")
     } else {
         Block::default().borders(Borders::ALL).title("History")
@@ -30,12 +32,8 @@ pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
 
     let list = List::new(cities)
         .block(history_block)
-        .style(Style::new().fg(Color::White))
-        .highlight_style(
-            Style::new()
-                .add_modifier(Modifier::ITALIC)
-                .bg(Color::LightYellow),
-        )
+        .style(theme.list_item)
+        .highlight_style(theme.list_highlight)
         .highlight_symbol(">")
         .repeat_highlight_symbol(true)
         .direction(ListDirection::TopToBottom);
