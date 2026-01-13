@@ -1,7 +1,7 @@
 use crate::state::CitySearchResult;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::{fs, path::PathBuf};
+use std::{fs, io, path::PathBuf};
 
 #[derive(Deserialize, Serialize, Default)]
 pub struct Config {
@@ -16,11 +16,12 @@ impl Config {
             .join(".config/skadi/skadi.ron")
     }
 
-    pub fn load_config() -> Self {
+    pub fn load_config() -> Result<Self> {
         let path = Self::config_path();
         match fs::read_to_string(&path) {
-            Ok(data) => ron::from_str(&data).unwrap_or_default(),
-            Err(_) => Config::default(),
+            Ok(data) => ron::from_str(&data).context("parse config"),
+            Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(Self::default()),
+            Err(err) => Err(err).context("read config"),
         }
     }
 
@@ -37,7 +38,7 @@ impl Config {
     }
 
     pub fn save_history(city: CitySearchResult) -> Result<()> {
-        let mut cfg = Self::load_config();
+        let mut cfg = Self::load_config()?;
 
         cfg.history.retain(|c| c != &city);
         cfg.history.insert(0, city);

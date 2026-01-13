@@ -10,7 +10,7 @@ use crossterm::event;
 use ratatui::DefaultTerminal;
 
 pub fn run(mut terminal: DefaultTerminal) -> Result<()> {
-    let configuration = Config::load_config();
+    let configuration = Config::load_config()?;
     let mut app_state = AppState::new(configuration);
     if app_state.favorite.is_some() {
         get_weather_by_geo(&mut app_state, CitySelection::Favorite);

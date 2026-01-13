@@ -29,3 +29,16 @@ pub struct GeoCoordinates {
     pub lat: f64,
     pub lon: f64,
 }
+
+impl From<GeocodingResult> for CitySearchResult {
+    fn from(result: GeocodingResult) -> Self {
+        Self {
+            name: result.name,
+            country: result.country,
+            coordinates: GeoCoordinates {
+                lat: result.latitude,
+                lon: result.longitude,
+            },
+        }
+    }
+}

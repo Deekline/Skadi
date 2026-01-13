@@ -3,10 +3,13 @@ use anyhow::{Context, Result};
 use crate::state::GeocodingResponse;
 
 pub fn search_cities(query: &str) -> Result<GeocodingResponse> {
-    let request_url = format!(
-        "https://geocoding-api.open-meteo.com/v1/search?name={}&count=10&language=en",
-        query,
-    );
+    let mut request_url = reqwest::Url::parse("https://geocoding-api.open-meteo.com/v1/search")
+        .context("build geocoding url")?;
+    request_url
+        .query_pairs_mut()
+        .append_pair("name", query)
+        .append_pair("count", "10")
+        .append_pair("language", "en");
 
     let client = reqwest::blocking::Client::new();
     let response = client

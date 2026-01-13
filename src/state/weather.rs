@@ -121,6 +121,60 @@ pub struct Weather {
     pub daily: DailyWeather,
 }
 
+impl From<Current> for CurrentWeather {
+    fn from(current: Current) -> Self {
+        Self {
+            time: current.time,
+            interval: current.interval,
+            temperature_2m: current.temperature_2m,
+            apparent_temperature: current.apparent_temperature,
+            relative_humidity_2m: current.relative_humidity_2m,
+            precipitation: current.precipitation,
+            weather_code: current.weather_code,
+            wind_speed_10m: current.wind_speed_10m,
+            wind_direction_0m: current.wind_direction_0m,
+            visibility: current.visibility,
+        }
+    }
+}
+
+impl From<Hourly> for HourlyWeather {
+    fn from(hourly: Hourly) -> Self {
+        Self {
+            time: hourly.time,
+            temperature: hourly.temperature_2m,
+            humidity: hourly.relative_humidity_2m,
+            weather_code: hourly.weather_code,
+            precipitation: hourly.precipitation,
+            precipitation_probability: hourly.precipitation_probability,
+            wind_speed: hourly.wind_speed_10m,
+        }
+    }
+}
+
+impl From<Daily> for DailyWeather {
+    fn from(daily: Daily) -> Self {
+        Self {
+            date: daily.time,
+            min_temp: daily.temperature_2m_min,
+            max_temp: daily.temperature_2m_max,
+            weather_code: daily.weather_code,
+            precipitation_sum: daily.precipitation_sum,
+            precipitation_probability_max: daily.precipitation_probability_max,
+        }
+    }
+}
+
+impl From<WeatherResponse> for Weather {
+    fn from(response: WeatherResponse) -> Self {
+        Self {
+            current: response.current.into(),
+            hourly: response.hourly.into(),
+            daily: response.daily.into(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
 enum IntOrString {
