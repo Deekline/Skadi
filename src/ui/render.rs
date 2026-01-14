@@ -1,81 +1,65 @@
 use crate::{
     state::AppState,
-    ui::{
-        draw_city_input, draw_current_weather, draw_detailed_weather, draw_forecast,
-        favorites::draw_favorites, history::draw_history, search_results::draw_search_results,
-    },
+    ui::{draw_current_weather, draw_detailed_weather, draw_forecast, history::draw_history},
 };
+
 use ratatui::{
     Frame,
-    layout::{Constraint, Layout, Rect},
-    widgets::{Block, Borders},
+    layout::{Constraint, Layout},
+    style::{Color, Style},
+    widgets::{Block, BorderType, Borders, Paragraph},
 };
 
-pub struct LayoutAreas {
-    pub bottom_bar_area: Rect,
-    pub input_area: Rect,
-    pub search_results_area: Rect,
-    pub history_area: Rect,
-    pub favorites_area: Rect,
-    pub current_area: Rect,
-    pub details_area: Rect,
-    pub forecast_area: Rect,
-}
-
-fn compute_layout(area: Rect) -> LayoutAreas {
-    let [main_area, bottom_bar_area] =
-        Layout::vertical([Constraint::Min(0), Constraint::Length(3)]).areas(area);
-
-    let [sidebar_area, content_area] =
-        Layout::horizontal([Constraint::Length(70), Constraint::Min(0)]).areas(main_area);
-
-    let [
-        input_area,
-        search_results_area,
-        history_area,
-        favorites_area,
-    ] = Layout::vertical([
-        Constraint::Length(3),
-        Constraint::Length(15),
-        Constraint::Length(10),
-        Constraint::Min(0),
-    ])
-    .areas(sidebar_area);
-
-    let [current_area, details_area, forecast_area] = Layout::vertical([
-        Constraint::Min(0),
-        Constraint::Length(10),
-        Constraint::Length(10),
-    ])
-    .areas(content_area);
-
-    LayoutAreas {
-        bottom_bar_area,
-        input_area,
-        search_results_area,
-        history_area,
-        favorites_area,
-        current_area,
-        forecast_area,
-        details_area,
-    }
-}
-
 pub fn render(frame: &mut Frame, app: &AppState) {
-    let areas = compute_layout(frame.area());
+    let area = frame.area();
 
-    draw_city_input(frame, areas.input_area, app);
-    draw_search_results(frame, areas.search_results_area, app);
-    draw_history(frame, areas.history_area, app);
-    draw_favorites(frame, areas.favorites_area, app);
-    draw_current_weather(frame, areas.current_area, app);
-    draw_detailed_weather(frame, areas.details_area, app);
-    draw_forecast(frame, areas.forecast_area, app);
+    let vertical_center = Layout::vertical([
+        Constraint::Min(0),
+        Constraint::Length(34),
+        Constraint::Min(0),
+    ])
+    .split(area)[1];
+
+    let centered_area = Layout::horizontal([
+        Constraint::Min(0),
+        Constraint::Length(100),
+        Constraint::Min(0),
+    ])
+    .split(vertical_center)[1];
 
     frame.render_widget(
         Block::default()
             .borders(Borders::ALL)
-            .title("Help / Navigation"),
-        areas.bottom_bar_area,
+            .border_type(BorderType::Rounded)
+            .border_style(Style::default().fg(Color::Indexed(244))),
+        centered_area,
+    );
+
+    let main_layout = Layout::vertical([
+        Constraint::Length(12),
+        Constraint::Length(8),
+        Constraint::Min(0),
+        Constraint::Length(2),
+    ])
+    .margin(2)
+    .split(centered_area);
+
+    draw_current_weather(frame, main_layout[0], app);
+    draw_detailed_weather(frame, main_layout[1], app);
+
+    let bottom_split = Layout::horizontal([Constraint::Percentage(40), Constraint::Percentage(60)])
+        .split(main_layout[2]);
+
+    draw_history(frame, bottom_split[0], app);
+    draw_forecast(frame, bottom_split[1], app);
+
+    let border_style = Style::default().fg(Color::Indexed(240));
+    frame.render_widget(
+        Paragraph::new("[S]earch   [F]avorite   [Q]uit").block(
+            Block::default()
+                .borders(Borders::TOP)
+                .border_style(border_style),
+        ),
+        main_layout[3],
     );
 }
