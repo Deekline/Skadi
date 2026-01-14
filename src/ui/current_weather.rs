@@ -107,22 +107,8 @@ fn build_details_lines(w: &CurrentWeather, area_width: u16, theme: &Theme) -> Ve
 
 pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
     let theme = Theme::default();
-
-    let title = match (app.current_city.as_ref(), app.weather.as_ref()) {
-        (Some(city), Some(w)) => Line::from(vec![
-            Span::styled(format!("{}, {}", city.name, city.country), theme.accent),
-            Span::raw("  "),
-            Span::styled(format!("Updated {}", hhmm(&w.current.time)), theme.default),
-        ]),
-        (Some(city), None) => Line::from(Span::styled(
-            format!("{}, {}", city.name, city.country),
-            theme.accent,
-        )),
-        _ => Line::from("Current Weather"),
-    };
-
-    let outer = Block::default().borders(Borders::ALL).title(title);
-    frame.render_widget(outer.clone(), area);
+    let outer = Block::default();
+    frame.render_widget(Block::default(), area);
     let inner = outer.inner(area);
 
     if app.current_city.is_none() {
