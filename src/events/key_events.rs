@@ -15,13 +15,15 @@ pub fn read_event(event: Event, app: &mut AppState) -> Result<bool> {
             KeyCode::Esc => {
                 if app.history_popup {
                     app.history_popup = false;
+                } else if app.search_popup {
+                    app.search_popup = false;
                 } else {
                     app.app_exit();
                 }
             }
             KeyCode::Char(c) => {
                 if c == 's' {
-                    todo!("Open search popup")
+                    app.search_popup = true;
                 }
                 if c == 'h' {
                     app.history_popup = true;
@@ -31,18 +33,14 @@ pub fn read_event(event: Event, app: &mut AppState) -> Result<bool> {
                 if app.history_popup {
                     handle_city_pick(app, key_event.code, Mode::History);
                 }
-                match app.focus {
-                    Focus::Input => {
-                        //handle_input_key(app, key_event.code)?;
-                    }
-                    Focus::SearchResults => {
-                        handle_city_pick(app, key_event.code, Mode::Search);
-                    }
-                    Focus::History => {
-                        // handle_city_pick(app, key_event.code, Mode::History);
-                    }
-                    Focus::Favorites => {
-                        todo!()
+                if app.search_popup {
+                    match app.focus {
+                        Focus::Input => {
+                            handle_input_key(app, key_event.code)?;
+                        }
+                        Focus::SearchResults => {
+                            handle_city_pick(app, key_event.code, Mode::Search);
+                        }
                     }
                 }
             }

@@ -80,6 +80,13 @@ pub fn render(frame: &mut Frame, app: &AppState) {
 
         draw_history(frame, popup_area, app);
     }
+
+    if app.search_popup {
+        let popup_area = centered_rect(area, 20, 20); // 60% width, 50% height
+
+        frame.render_widget(Clear, popup_area);
+        //TODO Add search input  and results results
+    }
 }
 
 fn centered_rect(r: Rect, percent_x: u16, percent_y: u16) -> Rect {

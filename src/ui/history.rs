@@ -5,7 +5,7 @@ use ratatui::{
     widgets::{Block, Borders},
 };
 
-use crate::state::{AppState, Focus};
+use crate::state::AppState;
 use crate::utils::ui_utils::Theme;
 
 pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
@@ -15,14 +15,7 @@ pub fn draw_history(frame: &mut Frame, area: Rect, app: &AppState) {
     let selected = app.history_selected.filter(|&idx| idx < app.history.len());
     state.select(selected);
 
-    let history_block = if matches!(app.focus, Focus::History) {
-        Block::default()
-            .borders(Borders::ALL)
-            .border_style(theme.border_active)
-            .title("History *")
-    } else {
-        Block::default().borders(Borders::ALL).title("History")
-    };
+    let history_block = Block::default().borders(Borders::ALL).title("History");
 
     let cities: Vec<String> = app
         .history

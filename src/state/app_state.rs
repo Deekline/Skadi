@@ -8,8 +8,6 @@ use crate::{
 pub enum Focus {
     Input,
     SearchResults,
-    History,
-    Favorites,
 }
 
 pub struct AppState {
@@ -25,6 +23,7 @@ pub struct AppState {
     pub weather_error: Option<String>,
     pub favorite: Option<CitySearchResult>,
     pub history_popup: bool,
+    pub search_popup: bool,
 }
 
 impl AppState {
@@ -42,6 +41,7 @@ impl AppState {
             weather_error: None,
             favorite: config.favorite,
             history_popup: false,
+            search_popup: false,
         }
     }
 
@@ -52,18 +52,14 @@ impl AppState {
     pub fn focus_next(&mut self) {
         self.focus = match self.focus {
             Focus::Input => Focus::SearchResults,
-            Focus::SearchResults => Focus::History,
-            Focus::History => Focus::Favorites,
-            Focus::Favorites => Focus::Input,
+            Focus::SearchResults => Focus::Input,
         }
     }
 
     pub fn focus_prev(&mut self) {
         self.focus = match self.focus {
-            Focus::Input => Focus::Favorites,
+            Focus::Input => Focus::SearchResults,
             Focus::SearchResults => Focus::Input,
-            Focus::History => Focus::SearchResults,
-            Focus::Favorites => Focus::History,
         }
     }
 }
