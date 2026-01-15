@@ -1,5 +1,5 @@
 use crate::controllers::{CitySelection, get_cities_by_name, get_weather_by_geo};
-use crate::state::{AppState, CitySearchResult, Focus};
+use crate::state::{AppState, Focus};
 use anyhow::Result;
 use crossterm::event::{Event, KeyCode};
 use tui_input::InputRequest;
@@ -22,11 +22,20 @@ pub fn read_event(event: Event, app: &mut AppState) -> Result<bool> {
                 }
             }
             KeyCode::Char(c) => {
-                if c == 's' {
-                    app.search_popup = true;
+                if app.search_popup && matches!(app.focus, Focus::Input) {
+                    handle_input_key(app, KeyCode::Char(c))?;
+                } else {
+                    if c == 's' {
+                        app.search_popup = true;
+                    }
+                    if c == 'h' {
+                        app.history_popup = true;
+                    }
                 }
-                if c == 'h' {
-                    app.history_popup = true;
+            }
+            KeyCode::Tab => {
+                if app.search_popup {
+                    app.focus_next();
                 }
             }
             _ => {
@@ -130,8 +139,9 @@ pub fn handle_input_key(app: &mut AppState, key_event: KeyCode) -> Result<()> {
         }
         KeyCode::Enter => {
             get_cities_by_name(app)?;
+            app.focus_next();
         }
-        _ => println!("Event"),
+        _ => (),
     }
     Ok(())
 }

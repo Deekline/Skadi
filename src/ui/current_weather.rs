@@ -9,7 +9,7 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph, Wrap},
+    widgets::{Block, Paragraph, Wrap},
 };
 
 fn build_big_temp_lines(w: &CurrentWeather, theme: &Theme) -> Vec<Line<'static>> {

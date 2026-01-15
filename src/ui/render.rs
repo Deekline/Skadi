@@ -1,6 +1,8 @@
 use crate::{
     state::AppState,
-    ui::{draw_current_weather, draw_detailed_weather, draw_forecast, history::draw_history},
+    ui::{
+        draw_city_search, draw_current_weather, draw_detailed_weather, draw_forecast, draw_history,
+    },
     utils::{chrono_utils::hhmm, ui_utils::Theme},
 };
 
@@ -75,17 +77,14 @@ pub fn render(frame: &mut Frame, app: &AppState) {
 
     if app.history_popup {
         let popup_area = centered_rect(area, 20, 20); // 60% width, 50% height
-
         frame.render_widget(Clear, popup_area);
-
         draw_history(frame, popup_area, app);
     }
 
     if app.search_popup {
         let popup_area = centered_rect(area, 20, 20); // 60% width, 50% height
-
         frame.render_widget(Clear, popup_area);
-        //TODO Add search input  and results results
+        draw_city_search(frame, popup_area, app);
     }
 }
 

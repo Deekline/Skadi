@@ -1,7 +1,7 @@
 use crate::{
     configuration::Config,
     services::get_weather,
-    state::{AppState, CitySearchResult, Weather, WeatherResponse},
+    state::{AppState, CitySearchResult, Weather},
 };
 
 #[derive(Clone, Copy, Debug)]
