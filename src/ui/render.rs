@@ -48,7 +48,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     let outer = Block::default()
         .borders(Borders::ALL)
         .border_type(BorderType::Rounded)
-        .border_style(Style::default().fg(Color::Indexed(244)))
+        .border_style(theme.border_default)
         .title(title);
 
     frame.render_widget(outer, centered_area);

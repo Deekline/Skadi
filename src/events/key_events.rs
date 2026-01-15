@@ -135,7 +135,9 @@ pub fn handle_input_key(app: &mut AppState, key_event: KeyCode) -> Result<()> {
             app.city_input.handle(InputRequest::DeletePrevChar);
         }
         KeyCode::Char(c) => {
-            app.city_input.handle(InputRequest::InsertChar(c));
+            if app.city_input.value().chars().count() < 20 {
+                app.city_input.handle(InputRequest::InsertChar(c));
+            }
         }
         KeyCode::Enter => {
             get_cities_by_name(app)?;

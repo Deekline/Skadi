@@ -7,6 +7,7 @@ pub struct Theme {
     pub error: Style,
     pub default: Style,
     pub border_active: Style,
+    pub border_default: Style,
     pub list_item: Style,
     pub list_highlight: Style,
 }
@@ -22,6 +23,7 @@ impl Default for Theme {
             subtle: Style::default().fg(Color::Gray),
             error: Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
             border_active: Style::default().fg(Color::Green),
+            border_default: Style::default().fg(Color::Indexed(244)),
             list_item: Style::default().fg(Color::White),
             list_highlight: Style::default()
                 .add_modifier(Modifier::ITALIC)

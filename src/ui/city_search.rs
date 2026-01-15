@@ -1,6 +1,7 @@
 use crate::state::{AppState, Focus};
 use crate::utils::ui_utils::Theme;
 use ratatui::layout::{Constraint, Layout};
+use ratatui::widgets::BorderType;
 use ratatui::{
     Frame,
     layout::{Alignment, Position, Rect},
@@ -8,17 +9,24 @@ use ratatui::{
 };
 
 pub fn draw_city_search(frame: &mut Frame, area: Rect, app: &AppState) {
-    let layout = Layout::vertical([Constraint::Length(3), Constraint::Min(0)]).split(area);
+    let theme = Theme::default();
+
+    let outer = Block::default()
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .border_style(theme.border_default);
+
+    frame.render_widget(outer, area);
+
+    let layout = Layout::vertical([Constraint::Length(3), Constraint::Min(0)])
+        .margin(2)
+        .split(area);
 
     // SearchInput
     let paragraph = Paragraph::new(format!("City: {}", app.city_input.value()))
         .wrap(Wrap { trim: true })
         .alignment(Alignment::Left)
-        .block(
-            Block::default()
-                .borders(Borders::all())
-                .title("Search city"),
-        );
+        .block(Block::default());
 
     frame.render_widget(paragraph, layout[0]);
 
@@ -27,8 +35,8 @@ pub fn draw_city_search(frame: &mut Frame, area: Rect, app: &AppState) {
         let label_len = label.chars().count() as u16;
         let value_len = app.city_input.cursor() as u16;
 
-        let x = area.x + 1 + label_len + value_len;
-        let y = area.y + 1;
+        let x = area.x + 2 + label_len + value_len;
+        let y = area.y + 2;
         let position = Position { x, y };
 
         frame.set_cursor_position(position);
@@ -36,20 +44,17 @@ pub fn draw_city_search(frame: &mut Frame, area: Rect, app: &AppState) {
 
     // SearchResults
 
-    let theme = Theme::default();
-
     let mut state = ListState::default();
     state.select(app.search_selected);
 
     let search_results_block = if matches!(app.focus, Focus::SearchResults) {
         Block::default()
-            .borders(Borders::ALL)
-            .border_style(theme.border_active)
-            .title("Search Results *")
+            .borders(Borders::TOP)
+            .title("Search Results * ")
     } else {
         Block::default()
-            .borders(Borders::ALL)
-            .title("Search Results")
+            .borders(Borders::TOP)
+            .title("Search Results ")
     };
 
     let cities: Vec<String> = app
