@@ -9,35 +9,49 @@ pub enum Mode {
     History,
 }
 
-pub fn read_event(event: Event, app_state: &mut AppState) -> Result<bool> {
+pub fn read_event(event: Event, app: &mut AppState) -> Result<bool> {
     match event {
         Event::Key(key_event) => match key_event.code {
             KeyCode::Esc => {
-                app_state.app_exit();
+                if app.history_popup {
+                    app.history_popup = false;
+                } else {
+                    app.app_exit();
+                }
             }
-            KeyCode::Tab => {
-                app_state.focus_next();
+            KeyCode::Char(c) => {
+                if c == 's' {
+                    todo!("Open search popup")
+                }
+                if c == 'h' {
+                    app.history_popup = true;
+                }
             }
-            _ => match app_state.focus {
-                Focus::Input => {
-                    handle_input_key(app_state, key_event.code)?;
+            _ => {
+                if app.history_popup {
+                    handle_city_pick(app, key_event.code, Mode::History);
                 }
-                Focus::SearchResults => {
-                    handle_city_pick(app_state, key_event.code, Mode::Search);
+                match app.focus {
+                    Focus::Input => {
+                        //handle_input_key(app, key_event.code)?;
+                    }
+                    Focus::SearchResults => {
+                        handle_city_pick(app, key_event.code, Mode::Search);
+                    }
+                    Focus::History => {
+                        // handle_city_pick(app, key_event.code, Mode::History);
+                    }
+                    Focus::Favorites => {
+                        todo!()
+                    }
                 }
-                Focus::History => {
-                    handle_city_pick(app_state, key_event.code, Mode::History);
-                }
-                Focus::Favorites => {
-                    todo!()
-                }
-            },
+            }
         },
         _ => {
             todo!()
         }
     }
-    Ok(app_state.exit)
+    Ok(app.exit)
 }
 
 pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
@@ -104,16 +118,16 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
     };
 }
 
-pub fn handle_input_key(app_state: &mut AppState, key_event: KeyCode) -> Result<()> {
+pub fn handle_input_key(app: &mut AppState, key_event: KeyCode) -> Result<()> {
     match key_event {
         KeyCode::Backspace => {
-            app_state.city_input.handle(InputRequest::DeletePrevChar);
+            app.city_input.handle(InputRequest::DeletePrevChar);
         }
         KeyCode::Char(c) => {
-            app_state.city_input.handle(InputRequest::InsertChar(c));
+            app.city_input.handle(InputRequest::InsertChar(c));
         }
         KeyCode::Enter => {
-            get_cities_by_name(app_state)?;
+            get_cities_by_name(app)?;
         }
         _ => println!("Event"),
     }

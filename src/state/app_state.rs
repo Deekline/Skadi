@@ -24,6 +24,7 @@ pub struct AppState {
     pub weather: Option<Weather>,
     pub weather_error: Option<String>,
     pub favorite: Option<CitySearchResult>,
+    pub history_popup: bool,
 }
 
 impl AppState {
@@ -40,6 +41,7 @@ impl AppState {
             weather: None,
             weather_error: None,
             favorite: config.favorite,
+            history_popup: false,
         }
     }
 

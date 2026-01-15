@@ -6,10 +6,10 @@ use crate::{
 
 use ratatui::{
     Frame,
-    layout::{Constraint, Layout},
+    layout::{Constraint, Layout, Rect},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{Block, BorderType, Borders, Paragraph},
+    widgets::{Block, BorderType, Borders, Clear, Paragraph},
 };
 
 pub fn render(frame: &mut Frame, app: &AppState) {
@@ -63,7 +63,6 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     draw_current_weather(frame, main_layout[0], app);
     draw_detailed_weather(frame, main_layout[1], app);
     draw_forecast(frame, main_layout[2], app);
-
     let border_style = Style::default().fg(Color::Indexed(240));
     frame.render_widget(
         Paragraph::new("[S]earch   [H]istory   [F]avorite   [Q]uit").block(
@@ -73,4 +72,28 @@ pub fn render(frame: &mut Frame, app: &AppState) {
         ),
         main_layout[3],
     );
+
+    if app.history_popup {
+        let popup_area = centered_rect(area, 20, 20); // 60% width, 50% height
+
+        frame.render_widget(Clear, popup_area);
+
+        draw_history(frame, popup_area, app);
+    }
+}
+
+fn centered_rect(r: Rect, percent_x: u16, percent_y: u16) -> Rect {
+    let popup_layout = Layout::vertical([
+        Constraint::Percentage((100 - percent_y) / 2),
+        Constraint::Percentage(percent_y),
+        Constraint::Percentage((100 - percent_y) / 2),
+    ])
+    .split(r);
+
+    Layout::horizontal([
+        Constraint::Percentage((100 - percent_x) / 2),
+        Constraint::Percentage(percent_x),
+        Constraint::Percentage((100 - percent_x) / 2),
+    ])
+    .split(popup_layout[1])[1]
 }
