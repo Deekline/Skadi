@@ -4,6 +4,8 @@ use anyhow::Result;
 use crossterm::event::{Event, KeyCode};
 use tui_input::InputRequest;
 
+const MAX_CITY_INPUT_LEN: usize = 20;
+
 pub enum Mode {
     Search,
     History,
@@ -11,54 +13,62 @@ pub enum Mode {
 
 pub fn read_event(event: Event, app: &mut AppState) -> Result<bool> {
     match event {
-        Event::Key(key_event) => match key_event.code {
-            KeyCode::Esc => {
-                if app.history_popup {
-                    app.history_popup = false;
-                } else if app.search_popup {
-                    app.search_popup = false;
-                } else {
-                    app.app_exit();
-                }
-            }
-            KeyCode::Char(c) => {
-                if app.search_popup && matches!(app.focus, Focus::Input) {
-                    handle_input_key(app, KeyCode::Char(c))?;
-                } else {
-                    if c == 's' {
-                        app.search_popup = true;
-                    }
-                    if c == 'h' {
-                        app.history_popup = true;
-                    }
-                }
-            }
-            KeyCode::Tab => {
-                if app.search_popup {
-                    app.focus_next();
-                }
-            }
-            _ => {
-                if app.history_popup {
-                    handle_city_pick(app, key_event.code, Mode::History);
-                }
-                if app.search_popup {
-                    match app.focus {
-                        Focus::Input => {
-                            handle_input_key(app, key_event.code)?;
-                        }
-                        Focus::SearchResults => {
-                            handle_city_pick(app, key_event.code, Mode::Search);
-                        }
-                    }
-                }
-            }
-        },
+        Event::Key(key_event) => handle_key_event(app, key_event.code)?,
         _ => {
             todo!()
         }
     }
     Ok(app.exit)
+}
+
+fn handle_key_event(app: &mut AppState, key_code: KeyCode) -> Result<()> {
+    match key_code {
+        KeyCode::Esc => handle_escape(app),
+        KeyCode::Char(c) => handle_char_key(app, c)?,
+        KeyCode::Tab if app.search_popup => app.focus_next(),
+        _ => handle_popup_keys(app, key_code)?,
+    }
+    Ok(())
+}
+
+fn handle_escape(app: &mut AppState) {
+    if app.history_popup {
+        app.history_popup = false;
+    } else if app.search_popup {
+        app.search_popup = false;
+    } else {
+        app.app_exit();
+    }
+}
+
+fn handle_char_key(app: &mut AppState, character: char) -> Result<()> {
+    if app.search_popup && matches!(app.focus, Focus::Input) {
+        handle_input_key(app, KeyCode::Char(character))?;
+        return Ok(());
+    }
+
+    match character {
+        's' => app.search_popup = true,
+        'h' => app.history_popup = true,
+        _ => {}
+    }
+
+    Ok(())
+}
+
+fn handle_popup_keys(app: &mut AppState, key_event: KeyCode) -> Result<()> {
+    if app.history_popup {
+        handle_city_pick(app, key_event, Mode::History);
+    }
+
+    if app.search_popup {
+        match app.focus {
+            Focus::Input => handle_input_key(app, key_event)?,
+            Focus::SearchResults => handle_city_pick(app, key_event, Mode::Search),
+        }
+    }
+
+    Ok(())
 }
 
 pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
@@ -67,47 +77,25 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
         None => app.search_selected = Some(0),
     };
 
-    let cities_list_len: usize = match mode {
-        Mode::Search => app.search_results.len(),
-        Mode::History => app.history.len(),
+    let (cities_list_len, selected) = match mode {
+        Mode::Search => (app.search_results.len(), &mut app.search_selected),
+        Mode::History => (app.history.len(), &mut app.history_selected),
     };
 
     match key_event {
         KeyCode::Down => {
-            match mode {
-                Mode::Search => {
-                    let current_selected = app.search_selected.unwrap_or(0);
-                    if current_selected + 1 >= cities_list_len {
-                        app.search_selected = Some(0)
-                    } else {
-                        app.search_selected = Some(current_selected + 1);
-                    }
-                }
-                Mode::History => {
-                    let current_selected = app.history_selected.unwrap_or(0);
-                    if current_selected + 1 >= cities_list_len {
-                        app.history_selected = Some(0)
-                    } else {
-                        app.history_selected = Some(current_selected + 1);
-                    }
-                }
-            };
+            let current_selected = selected.unwrap_or(0);
+            if current_selected + 1 >= cities_list_len {
+                *selected = Some(0);
+            } else {
+                *selected = Some(current_selected + 1);
+            }
         }
         KeyCode::Up => {
-            match mode {
-                Mode::Search => {
-                    let current_selected = app.search_selected.unwrap_or(0);
-                    if current_selected > 0 {
-                        app.search_selected = Some(current_selected - 1);
-                    }
-                }
-                Mode::History => {
-                    let current_selected = app.history_selected.unwrap_or(0);
-                    if current_selected > 0 {
-                        app.history_selected = Some(current_selected - 1);
-                    }
-                }
-            };
+            let current_selected = selected.unwrap_or(0);
+            if current_selected > 0 {
+                *selected = Some(current_selected - 1);
+            }
         }
         KeyCode::Enter => match mode {
             Mode::Search => {
@@ -135,7 +123,7 @@ pub fn handle_input_key(app: &mut AppState, key_event: KeyCode) -> Result<()> {
             app.city_input.handle(InputRequest::DeletePrevChar);
         }
         KeyCode::Char(c) => {
-            if app.city_input.value().chars().count() < 20 {
+            if app.city_input.value().chars().count() < MAX_CITY_INPUT_LEN {
                 app.city_input.handle(InputRequest::InsertChar(c));
             }
         }
