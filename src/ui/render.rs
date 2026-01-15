@@ -62,16 +62,11 @@ pub fn render(frame: &mut Frame, app: &AppState) {
 
     draw_current_weather(frame, main_layout[0], app);
     draw_detailed_weather(frame, main_layout[1], app);
-
-    let bottom_split = Layout::horizontal([Constraint::Percentage(40), Constraint::Percentage(60)])
-        .split(main_layout[2]);
-
-    draw_history(frame, bottom_split[0], app);
-    draw_forecast(frame, bottom_split[1], app);
+    draw_forecast(frame, main_layout[2], app);
 
     let border_style = Style::default().fg(Color::Indexed(240));
     frame.render_widget(
-        Paragraph::new("[S]earch   [F]avorite   [Q]uit").block(
+        Paragraph::new("[S]earch   [H]istory   [F]avorite   [Q]uit").block(
             Block::default()
                 .borders(Borders::TOP)
                 .border_style(border_style),

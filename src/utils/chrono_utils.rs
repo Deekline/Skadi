@@ -25,7 +25,7 @@ pub fn hhmm(s: &str) -> String {
 
 pub fn weekday_from_date(date: &str) -> Option<String> {
     let d = NaiveDate::parse_from_str(date, "%Y-%m-%d").ok()?;
-    Some(d.format("%A").to_string())
+    Some(d.format("%a").to_string())
 }
 
 #[cfg(test)]
@@ -69,10 +69,10 @@ mod tests {
 
     #[test]
     fn weekday_from_date_valid_dates() {
-        assert_eq!(weekday_from_date("2026-01-09").as_deref(), Some("Friday"));
-        assert_eq!(weekday_from_date("2026-1-9").as_deref(), Some("Friday"));
-        assert_eq!(weekday_from_date("1970-01-01").as_deref(), Some("Thursday"));
-        assert_eq!(weekday_from_date("2024-02-29").as_deref(), Some("Thursday"));
+        assert_eq!(weekday_from_date("2026-01-09").as_deref(), Some("Fri"));
+        assert_eq!(weekday_from_date("2026-1-9").as_deref(), Some("Fri"));
+        assert_eq!(weekday_from_date("1970-01-01").as_deref(), Some("Thu"));
+        assert_eq!(weekday_from_date("2024-02-29").as_deref(), Some("Thu"));
     }
 
     #[test]

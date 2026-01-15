@@ -62,7 +62,7 @@ fn build_details_lines(w: &CurrentWeather, area_width: u16, theme: &Theme) -> Ve
     let vis_km = w.visibility / 1000.0;
 
     let fill_width = area_width.saturating_sub(2) as usize;
-    let mut sep = String::from("- Details ");
+    let mut sep = String::from("Details");
     if sep.len() < fill_width {
         sep.push_str(&"─".repeat(fill_width - sep.len()));
     }

@@ -13,7 +13,7 @@ fn push_formated_string(row: &mut String, value: String, width: usize) {
 }
 
 pub fn draw_forecast(frame: &mut Frame, area: Rect, state: &AppState) {
-    let block = Block::default().borders(Borders::ALL).title("Hourly");
+    let block = Block::default().borders(Borders::TOP).title("Forecast");
 
     let Some(weather) = state.weather.as_ref() else {
         let p = Paragraph::new("No hourly data. Select a city and press Enter.")
@@ -43,15 +43,14 @@ pub fn draw_forecast(frame: &mut Frame, area: Rect, state: &AppState) {
     let max_cols = (area.width / col_w).max(1) as usize;
     let visible = dates.len().min(max_cols);
 
-    let rows: [String; 7] = std::array::from_fn(|_| String::new());
+    let rows: [String; 5] = std::array::from_fn(|_| String::new());
     let [
         mut row_date,
-        mut row_temp_min,
-        mut row_temp_max,
+        mut row_temp,
         mut row_prec_prob,
         mut row_prec,
         mut row_w_icon,
-        mut row_desc,
+        // mut row_desc,
     ] = rows;
 
     for i in 0..visible {
@@ -59,12 +58,10 @@ pub fn draw_forecast(frame: &mut Frame, area: Rect, state: &AppState) {
         push_formated_string(&mut row_date, date, col_w as usize);
 
         let t_min = temp_min[i].round() as i64;
-        let t_min_cell = format!("{t_min}°");
-        push_formated_string(&mut row_temp_min, t_min_cell, col_w as usize);
-
         let t_max = temp_max[i].round() as i64;
-        let t_max_cell = format!("{t_max}°");
-        push_formated_string(&mut row_temp_max, t_max_cell, col_w as usize);
+
+        let t_cell = format!("{t_min}° / {t_max}°");
+        push_formated_string(&mut row_temp, t_cell, col_w as usize);
 
         let p = precipitation[i];
         let p_cell = format!("{p}%");
@@ -74,18 +71,13 @@ pub fn draw_forecast(frame: &mut Frame, area: Rect, state: &AppState) {
         let p_prob_cell = format!("{p_prob}%");
         push_formated_string(&mut row_prec_prob, p_prob_cell, col_w as usize);
 
-        let (icon, desc) = weather_icon_and_label(Some(weather_code[i]));
+        let (icon, _desc) = weather_icon_and_label(Some(weather_code[i]));
 
-        let w_icon_cell = format!("{icon}");
-        push_formated_string(&mut row_w_icon, w_icon_cell, col_w as usize);
-
-        let w_desc_cell = format!("{desc}");
-        push_formated_string(&mut row_desc, w_desc_cell, col_w as usize);
+        push_formated_string(&mut row_w_icon, icon.to_string(), col_w as usize);
+        //push_formated_string(&mut row_desc, desc.to_string(), col_w as usize);
     }
 
-    let content = format!(
-        "{row_date}\n{row_temp_max}\n{row_w_icon}\n{row_desc}\n{row_temp_min}\n{row_prec_prob}\n{row_prec}"
-    );
+    let content = format!("{row_date}\n{row_temp}\n{row_w_icon}\n\n{row_prec_prob}\n{row_prec}");
 
     let paragraph = Paragraph::new(content)
         .alignment(Alignment::Left)
