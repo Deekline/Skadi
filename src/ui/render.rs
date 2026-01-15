@@ -65,7 +65,7 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     draw_forecast(frame, main_layout[2], app);
     let border_style = Style::default().fg(Color::Indexed(240));
     frame.render_widget(
-        Paragraph::new("[S]earch   [H]istory   [F]avorite   [Q]uit").block(
+        Paragraph::new("[S]earch   [H]istory   [Q]uit").block(
             Block::default()
                 .borders(Borders::TOP)
                 .border_style(border_style),

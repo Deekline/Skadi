@@ -60,9 +60,9 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
         None => app.search_selected = Some(0),
     };
 
-    let cities_list: &[CitySearchResult] = match mode {
-        Mode::Search => &app.search_results,
-        Mode::History => &app.history,
+    let cities_list_len: usize = match mode {
+        Mode::Search => app.search_results.len(),
+        Mode::History => app.history.len(),
     };
 
     match key_event {
@@ -70,13 +70,17 @@ pub fn handle_city_pick(app: &mut AppState, key_event: KeyCode, mode: Mode) {
             match mode {
                 Mode::Search => {
                     let current_selected = app.search_selected.unwrap_or(0);
-                    if current_selected + 1 < cities_list.len() {
+                    if current_selected + 1 >= cities_list_len {
+                        app.search_selected = Some(0)
+                    } else {
                         app.search_selected = Some(current_selected + 1);
                     }
                 }
                 Mode::History => {
                     let current_selected = app.history_selected.unwrap_or(0);
-                    if current_selected + 1 < cities_list.len() {
+                    if current_selected + 1 >= cities_list_len {
+                        app.history_selected = Some(0)
+                    } else {
                         app.history_selected = Some(current_selected + 1);
                     }
                 }
