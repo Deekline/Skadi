@@ -1,10 +1,9 @@
-use crate::state::AppState;
+use crate::{state::AppState, utils::ui_utils::Theme};
 
 use chrono::{NaiveDateTime, Timelike};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::{Color, Style},
     symbols,
     widgets::{Axis, Block, Chart, Dataset, GraphType, Paragraph, Wrap},
 };
@@ -23,7 +22,7 @@ fn parse_hour(s: &str) -> Option<f64> {
     parse_time(s).map(|dt| dt.hour() as f64)
 }
 
-pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
+pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState, theme: &Theme) {
     let block = Block::default().title("Hourly");
 
     let Some(weather) = app.weather.as_ref() else {
@@ -71,7 +70,7 @@ pub fn draw_detailed_weather(frame: &mut Frame, area: Rect, app: &AppState) {
         Dataset::default()
             .marker(symbols::Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(Style::default().fg(Color::White))
+            .style(theme.default)
             .data(&points),
     ])
     .block(block)

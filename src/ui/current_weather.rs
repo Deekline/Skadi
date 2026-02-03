@@ -43,16 +43,16 @@ fn build_additional_info_lines(w: &CurrentWeather, theme: &Theme) -> Vec<Line<'s
             Span::styled("Wind ", theme.accent),
             Span::styled(format!("{:.1} km/h", w.wind_speed_10m), theme.default),
             Span::styled("  ·  ", theme.label),
-            Span::styled("Dir ", theme.label),
+            Span::styled("Dir ", theme.accent),
             Span::styled(wind_dir, theme.default),
             Span::styled("  ·  ", theme.label),
-            Span::styled("Hum ", theme.label),
+            Span::styled("Hum ", theme.accent),
             Span::styled(format!("{}%", w.relative_humidity_2m), theme.default),
             Span::styled("  ·  ", theme.label),
-            Span::styled("Precip ", theme.label),
+            Span::styled("Precip ", theme.accent),
             Span::styled(format!("{:.1}", w.precipitation), theme.default),
             Span::styled("  ·  ", theme.label),
-            Span::styled("Vis ", theme.label),
+            Span::styled("Vis ", theme.accent),
             Span::styled(format!("{:.1} km", vis_km), theme.default),
         ]),
     ]
@@ -88,7 +88,7 @@ fn build_details_lines(w: &CurrentWeather, area_width: u16, theme: &Theme) -> Ve
     }
 
     vec![
-        Line::from(Span::styled(sep, theme.accent)),
+        Line::from(Span::styled(sep, theme.default)),
         Line::from(""),
         Line::from(Span::styled(
             join_two_col(left1, right1, col2_start),
@@ -105,8 +105,7 @@ fn build_details_lines(w: &CurrentWeather, area_width: u16, theme: &Theme) -> Ve
     ]
 }
 
-pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
-    let theme = Theme::default();
+pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState, theme: &Theme) {
     let outer = Block::default();
     frame.render_widget(Block::default(), area);
     let inner = outer.inner(area);
@@ -149,16 +148,16 @@ pub fn draw_current_weather(frame: &mut Frame, area: Rect, app: &AppState) {
         ])
         .split(inner);
 
-    let big_lines = build_big_temp_lines(w, &theme);
+    let big_lines = build_big_temp_lines(w, theme);
     frame.render_widget(Paragraph::new(big_lines), chunks[0]);
 
-    let info_lines = build_additional_info_lines(w, &theme);
+    let info_lines = build_additional_info_lines(w, theme);
     frame.render_widget(
         Paragraph::new(info_lines).wrap(Wrap { trim: true }),
         chunks[1],
     );
 
-    let details_lines = build_details_lines(w, chunks[2].width, &theme);
+    let details_lines = build_details_lines(w, chunks[2].width, theme);
     frame.render_widget(
         Paragraph::new(details_lines).wrap(Wrap { trim: true }),
         chunks[2],

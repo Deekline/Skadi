@@ -62,8 +62,8 @@ pub fn render(frame: &mut Frame, app: &AppState) {
     .margin(2)
     .split(centered_area);
 
-    draw_current_weather(frame, main_layout[0], app);
-    draw_detailed_weather(frame, main_layout[1], app);
+    draw_current_weather(frame, main_layout[0], app, &theme);
+    draw_detailed_weather(frame, main_layout[1], app, &theme);
     draw_forecast(frame, main_layout[2], app);
     let border_style = Style::default().fg(Color::Indexed(240));
     frame.render_widget(
